@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Healths.Server (start)
 
 main :: IO ()
-main = someFunc
+main = start 8080 "data.json"
