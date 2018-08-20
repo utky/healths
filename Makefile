@@ -1,4 +1,4 @@
-.PHONY: all clean test
+.PHONY: all clean test run
 all:
 	stack build
 
@@ -7,3 +7,6 @@ test:
 
 clean:
 	stack clean
+
+run:
+	stack exec healths

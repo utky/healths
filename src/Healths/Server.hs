@@ -10,9 +10,12 @@ import Data.IORef
 import Data.Monoid
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import Data.Text.Lazy (toStrict)
 import System.IO (Handle, FilePath)
 import Healths.Core
 import Healths.Storage
+import qualified Healths.View as V
+import qualified Text.Blaze.Html.Renderer.Text as Renderer
 
 data MySession = EmptySession
 newtype MyAppState = DummyAppState (IORef Int)
@@ -26,32 +29,24 @@ app dataFile =
        spockCfg <- defaultSpockCfg EmptySession (fileConnection dataFile) (DummyAppState ref)
        spock spockCfg routes
 
-index :: T.Text
-index = T.pack $ concat 
-  [ "<!DOCTYPE html>"
-  , "<html>"
-  , "<head>"
-  , "<meta charset=\"UTF-8\">"
-  , "<title>Health tracker</title>"
-  , "</head>"
-  , "<body>"
-  , "<form>"
-  , "</form>"
-  , "</body>"
-  , "</html>"
-  ]
 
 routes :: SpockM FilePath MySession MyAppState ()
 routes = do
-  get root $
-      text "Hello World!"
+
   get ("profiles" <//> var) $ \user -> do
     profile <- runQuery $ \conn -> do
       state <- load conn
       return $ fromMaybe defaultProfile (state >>= getProfile user)
     json profile
+
   post ("profiles" <//> var) $ \user -> do
     profile <- jsonBody'
     runQuery $ \conn -> do
       state <- load conn
       maybe (return ()) (flip save conn . putProfile user profile) state
+
+  get ("edit" <//> var) $ \user -> do
+    profile <- runQuery $ \conn -> do
+      state <- load conn
+      return $ fromMaybe defaultProfile (state >>= getProfile user)
+    html $ toStrict $ Renderer.renderHtml $ V.profile user profile

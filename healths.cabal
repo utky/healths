@@ -4,7 +4,7 @@ cabal-version: >= 1.10
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5b245cd7c4d04c52deef2b500070552706440469fa4104c9e1bb655a4bc928e3
+-- hash: 4e2c89c264fffa3456db7a946f3193f3dfe015e35bdcc5db3c8b8c4d340eb8a4
 
 name:           healths
 version:        0.1.0.0
@@ -30,6 +30,7 @@ library
       Healths.Core
       Healths.Server
       Healths.Storage
+      Healths.View
       Lib
   other-modules:
       Paths_healths
@@ -39,6 +40,7 @@ library
       Spock
     , aeson
     , base >=4.7 && <5
+    , blaze-html
     , bytestring
     , containers
     , mtl
@@ -58,6 +60,7 @@ executable healths
       Spock
     , aeson
     , base >=4.7 && <5
+    , blaze-html
     , bytestring
     , containers
     , healths
@@ -82,6 +85,7 @@ test-suite healths-test
       Spock
     , aeson
     , base >=4.7 && <5
+    , blaze-html
     , bytestring
     , containers
     , healths

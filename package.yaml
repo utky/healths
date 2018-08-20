@@ -29,6 +29,7 @@ dependencies:
 - containers
 - time
 - bytestring
+- blaze-html
 
 library:
   source-dirs: src
