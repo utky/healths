@@ -20,6 +20,9 @@ frame t c =
   docTypeHtml $ do
     H.head $ do
       H.meta ! charset "UTF-8"
+      H.link
+        ! A.href "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css"
+        ! A.rel "stylesheet"
       H.title t
     body $ do
       c
@@ -27,11 +30,10 @@ frame t c =
 
 
 profile :: UserId -> Profile -> Html
-profile uid pf = frame (toHtml uid) $ do
-  header $ h1 "Health Tracker"
+profile uid pf = frame (toHtml $ T.concat ["Health Tracker: ", uid]) $ do
   article $ weightEditor uid pf
   footer $ do
-    H.div $ H.span "Yutaka Imamura"
+    H.div $ H.span "Copyright (C) Yutaka Imamura All Rights Reserved."
 
 
 inputText
@@ -40,10 +42,12 @@ inputText
   -> Html           -- ^ label
   -> Html
 inputText n v l =
-  H.div $ do
+  H.div ! class_ "field" $ do
     H.label
+      ! class_ "label"
       ! A.for n $ l
     H.input
+      ! class_ "control"
       ! A.id n
       ! A.name n
       ! type_ "text"
@@ -56,11 +60,11 @@ weightEditor uid pf =
     inputText "bmi"                (toValue $ profileBMI pf)     "BMI: "
     inputText "body_fat"           (toValue $ profileBodyFat pf) "Body Fat: "
     inputText "muscle"             (toValue $ profileMuscle pf)  "Muscle: "
-    inputText "visceral_fat_level" (toValue $ profileMuscle pf)  "Visceral Fat Level: "
-    H.input
-      ! type_ "button"
-      ! A.value "save"
-      ! A.onclick (sendForm uid)
+    inputText "visceral_fat_level" (toValue $ profileVisceralFatLevel pf)  "Visceral Fat Level: "
+    H.div ! class_ "control" $ do
+      H.button
+        ! class_ "button is-link"
+        ! A.onclick (sendForm uid) $ "save"
 
 sendForm :: UserId -> AttributeValue
 sendForm uid = toValue $ concat
