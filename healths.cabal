@@ -4,7 +4,7 @@ cabal-version: >= 1.10
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 4e2c89c264fffa3456db7a946f3193f3dfe015e35bdcc5db3c8b8c4d340eb8a4
+-- hash: 1f757b96032766cca37db075755b9693d6731b1560981ac489bffa43c27c3a46
 
 name:           healths
 version:        0.1.0.0
@@ -27,9 +27,14 @@ source-repository head
 
 library
   exposed-modules:
+      Healths.Config
       Healths.Core
+      Healths.InfluxDB
+      Healths.JSONFile
       Healths.Server
-      Healths.Storage
+      Healths.Spock
+      Healths.Store
+      Healths.Types
       Healths.View
       Lib
   other-modules:
@@ -43,7 +48,12 @@ library
     , blaze-html
     , bytestring
     , containers
+    , directory
+    , free
+    , influxdb
+    , lens
     , mtl
+    , stm
     , text
     , time
     , wai
@@ -63,8 +73,13 @@ executable healths
     , blaze-html
     , bytestring
     , containers
+    , directory
+    , free
     , healths
+    , influxdb
+    , lens
     , mtl
+    , stm
     , text
     , time
     , wai
@@ -76,22 +91,27 @@ test-suite healths-test
   other-modules:
       Healths.CoreSpec
       Healths.ServerSpec
-      Healths.StorageSpec
       Paths_healths
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      Spock
+      QuickCheck
+    , Spock
     , aeson
     , base >=4.7 && <5
     , blaze-html
     , bytestring
     , containers
+    , directory
+    , free
     , healths
     , hspec
     , hspec-wai
+    , influxdb
+    , lens
     , mtl
+    , stm
     , text
     , time
     , wai

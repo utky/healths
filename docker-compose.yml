@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+
+  healths:
+    image: utky/healths:latest
+    ports:
+      - "9090:9090"
+    links:
+      - influxdb
+    volumes:
+      - type: volume
+        source: healths-data
+        target: /data
+
+  influxdb:
+    image: influxdb:1.6-alpine
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+    volumes:
+      - type: volume
+        source: influxdb-data
+        target: /var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana:5.2.3
+    ports:
+      - "3000:3000"
+    links:
+      - influxdb
+    volumes:
+      - type: volume
+        source: grafana-data
+        target: /data
+    environment:
+      # http://docs.grafana.org/installation/configuration/#path
+      - GF_DATABASE_PATH=/data/grafana.db
+
+volumes:
+  healths-data:
+  influxdb-data:
+  grafana-data:

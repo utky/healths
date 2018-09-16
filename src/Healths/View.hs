@@ -4,7 +4,7 @@ module Healths.View where
 import qualified Data.Text as T
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
-import Healths.Core
+import Healths.Types
 
 superagent :: Html
 superagent = do

@@ -30,6 +30,11 @@ dependencies:
 - time
 - bytestring
 - blaze-html
+- influxdb
+- lens
+- directory
+- stm
+- free
 
 library:
   source-dirs: src
@@ -59,3 +64,5 @@ tests:
     - hspec
     - hspec-wai
     - aeson
+    - time
+    - QuickCheck
