@@ -5,14 +5,16 @@
 #
 # https://docs.haskellstack.org/en/stable/travis_ci/
 #
-# Copy these contents into the root directory of your Github project in a file
-# named .travis.yml
+# Copy these contents into the root directory of your Github project in a file # named .travis.yml
 
 # Use new container infrastructure to enable caching
 sudo: false
 
 # Do not choose a language; we provide our own build tools.
 language: generic
+
+services:
+  - docker
 
 # Caching so the next build will be fast too.
 cache:
@@ -33,8 +35,9 @@ before_install:
 
 install:
 # Build dependencies
-- stack --no-terminal --install-ghc test --only-dependencies
+- stack docker pull
+- stack --docker --no-terminal --install-ghc test --only-dependencies
 
 script:
 # Build the package, its tests, and its docs and run the tests
-- stack --no-terminal test --haddock --no-haddock-deps
+- stack --docker --no-terminal test --haddock --no-haddock-deps
