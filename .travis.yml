@@ -13,9 +13,6 @@ sudo: false
 # Do not choose a language; we provide our own build tools.
 language: generic
 
-services:
-  - docker
-
 # Caching so the next build will be fast too.
 cache:
   directories:
@@ -35,9 +32,8 @@ before_install:
 
 install:
 # Build dependencies
-- stack docker pull
-- stack --docker --no-terminal --install-ghc test --only-dependencies
+- stack --no-terminal --install-ghc test --only-dependencies
 
 script:
 # Build the package, its tests, and its docs and run the tests
-- stack --docker --no-terminal test --haddock --no-haddock-deps
+- stack --no-terminal test --haddock --no-haddock-deps
