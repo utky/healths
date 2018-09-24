@@ -1,4 +1,4 @@
-.PHONY: all clean test run
+.PHONY: all clean test run build-image
 all:
 	stack build
 
@@ -10,3 +10,7 @@ clean:
 
 run:
 	stack exec healths
+
+# Multi stage build
+build-image:
+	@docker build -t utky/healths:latest .

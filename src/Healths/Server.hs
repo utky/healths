@@ -20,7 +20,11 @@ import Healths.InfluxDB
 import qualified Healths.View as V
 import qualified Text.Blaze.Html.Renderer.Text as Renderer
 
-data AppF a = Influx (InfluxM a) | Json (JSONCache a)
+data AppF a
+  = Influx (InfluxM a)
+  | Json (JSONCache a)
+
+-- Delegating instanc implementation to underlying Monad
 
 instance GetProfile AppF where
   getProfile = Json . getProfile
@@ -35,8 +39,10 @@ instance Functor AppF where
   fmap f (Influx m) = Influx $ fmap f m
   fmap f (Json m) = Json $ fmap f m
 
+-- | Combined type with Free and Application
 type AppM a = Free AppF a
 
+-- | Run effect of application with given initial state and connection
 runAppM :: TVar AppState -> AppConn -> AppF a -> IO a
 runAppM _ (AppConn (infconf, _))  (Influx influx) =
   flip runReaderT infconf $ runInflux influx
@@ -44,40 +50,43 @@ runAppM tstate (AppConn (_, fileconf)) (Json js) =
   let cfg = CacheCtx { cacheConfig = fileconf, cacheState = tstate }
   in  flip runReaderT cfg $ runCache js
 
+-- Wrapper of configuration for InfluxDB and JSON cache
 newtype AppConn = AppConn (InfluxHandle, FileStoreConfig)
 
 instance HasFileStore AppConn where
   getFileStoreConfig (AppConn (_, c)) = c
 
-defaultPoolConfiguration :: PoolCfg
-defaultPoolConfiguration = PoolCfg
-  { pc_stripes = 1
-  , pc_resPerStripe = 1
-  , pc_keepOpenTime = 60000 :: NominalDiffTime
-  }
 
-
-connectionBuilder :: AppConn -> ConnBuilder AppConn
-connectionBuilder c = ConnBuilder
-  { cb_createConn = return c
-  , cb_destroyConn = const $ return ()
-  , cb_poolConfiguration = defaultPoolConfiguration
-  }
-
-
+-- | Build spock connection pool with given configuration
 makeConnection :: AppConn -> PoolOrConn AppConn
 makeConnection = PCConn . connectionBuilder
+  where
+    connectionBuilder :: AppConn -> ConnBuilder AppConn
+    connectionBuilder c = ConnBuilder
+      { cb_createConn = return c
+      , cb_destroyConn = const $ return ()
+      , cb_poolConfiguration = defaultPoolConfiguration
+      }
+    defaultPoolConfiguration :: PoolCfg
+    defaultPoolConfiguration = PoolCfg
+      { pc_stripes = 1
+      , pc_resPerStripe = 1
+      , pc_keepOpenTime = 60000 :: NominalDiffTime
+      }
 
 
+-- | Alias of application specific monad
 type ServerM = SpockM AppConn () (TVar AppState)
 
+-- | Bind application with specified port
 start :: Int -> HealthConfig -> IO ()
 start port config = runSpock port (app config)
 
+-- | Entrypoint of application
 app :: HealthConfig -> IO Middleware
 app config = do
   let dbHandle  = newInfluxHandle $ historyDatabaseHost config
-      localDBConfig   = FileStoreConfig $ localDatabasePath config
+      localDBConfig = FileStoreConfig $ localDatabasePath config
       conn = makeConnection $ AppConn (dbHandle, localDBConfig)
   state <- initAppState
   spockCfg <- defaultSpockCfg () conn state
