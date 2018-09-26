@@ -55,7 +55,7 @@ inputText n v l =
 
 weightEditor :: UserId -> Profile -> Html
 weightEditor uid pf =
-  H.form $ do
+  H.div $ do
     inputText "weight"             (toValue $ profileWeight pf)  "Weight: "
     inputText "bmi"                (toValue $ profileBMI pf)     "BMI: "
     inputText "body_fat"           (toValue $ profileBodyFat pf) "Body Fat: "
@@ -64,18 +64,18 @@ weightEditor uid pf =
     H.div ! class_ "control" $ do
       H.button
         ! class_ "button is-link"
-        ! A.onclick (sendForm uid) $ "save"
-
-sendForm :: UserId -> AttributeValue
-sendForm uid = toValue $ concat
-  [ "request"
-  , ".post(\"/profiles/" ++ (T.unpack uid) ++ "\")"
-  , ".send({"
-  ,  "  weight: parseFloat(document.querySelector(\"#weight\").value)"
-  ,  ", bmi:    parseFloat(document.querySelector(\"#bmi\").value)"
-  ,  ", body_fat: parseFloat(document.querySelector(\"#body_fat\").value)"
-  ,  ", muscle: parseFloat(document.querySelector(\"#muscle\").value)"
-  ,  ", visceral_fat_level: parseFloat(document.querySelector(\"#visceral_fat_level\").value)"
-  , "})"
-  , ".end(function (err, res) { console.log(res) });"
-  ]
+        ! A.onclick "sendState();" $ "save"
+      H.script $ toHtml $ unlines
+        [ "function sendState() {"
+        , "  request"
+        , "  .post(\"/profiles/" ++ (T.unpack uid) ++ "\")"
+        , "  .send({"
+        ,    "  weight: parseFloat(document.querySelector(\"#weight\").value)"
+        ,    ", bmi:    parseFloat(document.querySelector(\"#bmi\").value)"
+        ,    ", body_fat: parseFloat(document.querySelector(\"#body_fat\").value)"
+        ,    ", muscle: parseFloat(document.querySelector(\"#muscle\").value)"
+        ,    ", visceral_fat_level: parseFloat(document.querySelector(\"#visceral_fat_level\").value)"
+        , "  })"
+        , "  .end(function (err, res) { console.log(res) });"
+        , "}"
+        ]
