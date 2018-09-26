@@ -2,15 +2,16 @@ version: "3.7"
 services:
 
   healths:
-    image: utky/healths:latest
+    image: utky/healths:dev
     ports:
-      - "9090:9090"
+      - "8080:8080"
     links:
       - influxdb
     volumes:
       - type: volume
         source: healths-data
         target: /data
+    command: -i influxdb -d /data/state.json -p 8080
 
   influxdb:
     image: influxdb:1.6-alpine

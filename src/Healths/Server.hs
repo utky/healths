@@ -79,8 +79,8 @@ makeConnection = PCConn . connectionBuilder
 type ServerM = SpockM AppConn () (TVar AppState)
 
 -- | Bind application with specified port
-start :: Int -> HealthConfig -> IO ()
-start port config = runSpock port (app config)
+start :: HealthConfig -> IO ()
+start config = runSpock (serverPort config) (app config)
 
 -- | Entrypoint of application
 app :: HealthConfig -> IO Middleware

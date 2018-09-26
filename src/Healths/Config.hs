@@ -5,6 +5,7 @@ import qualified Data.Text as T
 
 data HealthConfig
   = HealthConfig
-  { historyDatabaseHost :: T.Text
+  { serverPort :: Int
+  , historyDatabaseHost :: T.Text
   , localDatabasePath :: FilePath
   }

@@ -4,7 +4,7 @@ cabal-version: >= 1.10
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1f757b96032766cca37db075755b9693d6731b1560981ac489bffa43c27c3a46
+-- hash: 504a6eb1ce14dd808611f5a97da07624cf4f3fef1f854cb74613d8cf9d0c2d42
 
 name:           healths
 version:        0.1.0.0
@@ -79,6 +79,7 @@ executable healths
     , influxdb
     , lens
     , mtl
+    , optparse-applicative
     , stm
     , text
     , time

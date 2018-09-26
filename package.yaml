@@ -49,6 +49,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - healths
+    - optparse-applicative
 
 tests:
   healths-test:

@@ -13,4 +13,7 @@ run:
 
 # Multi stage build
 build-image:
-	@docker build -t utky/healths:latest .
+	@stack --docker --docker-stack-exe=image --no-nix build
+	@stack --docker --docker-stack-exe=image --no-nix install --local-bin-path .
+	@docker build -t utky/healths:dev -f Dockerfile.local .
+	@rm ./healths
