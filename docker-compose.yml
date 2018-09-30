@@ -26,16 +26,13 @@ services:
   grafana:
     image: grafana/grafana:5.2.3
     ports:
-      - "3000:3000"
+      - "8087:3000"
     links:
       - influxdb
     volumes:
       - type: volume
         source: grafana-data
-        target: /data
-    environment:
-      # http://docs.grafana.org/installation/configuration/#path
-      - GF_DATABASE_PATH=/data/grafana.db
+        target: /var/lib/grafana
 
 volumes:
   healths-data:
